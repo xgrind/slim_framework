@@ -41,6 +41,10 @@ class ComposerStaticInit56fb5aec8446ea79884efd56a2f5051f
             'Nyholm\\Psr7\\' => 12,
             'Nyholm\\Psr7Server\\' => 18,
         ),
+        'M' => 
+        array (
+            'MyApp\\' => 6,
+        ),
         'I' => 
         array (
             'Interop\\Container\\' => 18,
@@ -95,6 +99,10 @@ class ComposerStaticInit56fb5aec8446ea79884efd56a2f5051f
         'Nyholm\\Psr7Server\\' => 
         array (
             0 => __DIR__ . '/..' . '/nyholm/psr7-server/src',
+        ),
+        'MyApp\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/MyApp',
         ),
         'Interop\\Container\\' => 
         array (
