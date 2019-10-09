@@ -2,6 +2,7 @@
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
+use Illuminate\Database\Capsule\Manager as Capsule;
 
 require 'vendor/autoload.php';
 
@@ -11,39 +12,179 @@ $app = new \Slim\App([
     ]
 ]);
 
+$container = $app->getContainer();
+$container['db'] = function() {
+
+    $capsule = new Capsule;
+    $capsule->addConnection([
+        'driver'    => 'mysql',
+        'host'      => 'localhost',
+        'database'  => 'slim',
+        'username'  => 'root',
+        'password'  => 'banco1234',
+        'charset'   => 'utf8',
+        'collation' => 'utf8_unicode_ci',
+        'prefix'    => '',
+    ]);
+
+    $capsule->setAsGlobal();
+    $capsule->bootEloquent();
+
+    return $capsule;
+};
+
+$app->get('/usuarios', function(Request $request, Response $response) {
+
+    $db = $this->get('db');
+    // $db->schema()->dropIfExists('usuarios');
+    // $db->schema()->create('usuarios', function($table) {
+
+    //     $table->increments('id');
+    //     $table->string('nome');
+    //     $table->string('email');
+    //     $table->timestamps();
+
+    // });
+
+    //inserir
+    // $db->table('usuarios')->insert([
+    //     'nome' => 'Michael Martins',
+    //     'email' => 'michaelfm21@gmail.com'
+    // ]);
+
+    //atualizar
+    // $db->table('usuarios')
+    //             ->where('id', 1)
+    //             ->update([
+    //                 'nome' => 'Michael'
+    //             ]);
+
+    //deletar
+    // $db->table('usuarios')
+    //             ->where('id', 1)
+    //             ->delete();
+
+
+    //listar
+    $usuarios = $db->table('usuarios')->get();
+
+    foreach($usuarios as $usuario) {
+        echo $usuario->nome . '<br>';
+    }
+                
+    
+});
+
+$app->run();
+
+
+/* Tipos de respostas
+cabeçalho, texto, Json, XML
+ */
+
+// $app->get('/header', function(Request $request, Response $response) {
+
+//     $response->write('Esse é um retorno header');
+//     return $response->withHeader('allow', 'PUT')
+//              ->withAddedHeader('Content-Length', 10) ;
+    
+// });
+
+// $app->get('/json', function(Request $request, Response $response) {
+
+//     return $response->withJson([
+//         "nome" => "Michael Martins",
+//         "endereco" => "Teste"
+//     ]);
+    
+// });
+
+// $app->get('/xml', function(Request $request, Response $response) {
+
+//     $xml = file_get_contents('arquivo.xml');
+//     $response->write($xml);
+
+//     return $response->withHeader('Content-Type', 'application/xml');
+    
+// });
+
+
+
+/* middleware */
+// $app->add(function($request, $response, $next) {
+//     $response->write(' Inicio camadas 1 + ');
+
+//     // return $next($request, $response);
+
+//     $reponse = $next($request, $response);
+//     $response->write(' + Fim da camada 1 ');
+
+//     return $response;
+// });
+
+// $app->add(function($request, $response, $next) {
+//     $response->write(' Inicio camadas 2 + ');
+
+//     // return $next($request, $response);
+
+//     $reponse = $next($request, $response);
+//     $response->write(' + Fim da camada 2 ');
+
+//     return $response;
+// });
+
+// // $app->add(function($request, $response, $next) {
+// //     $response->write(' Inicio camadas 2 + ');
+
+// //     return $next($request, $response);
+// // });
+
+// $app->get('/usuarios', function(Request $request, Response $response) {
+    
+//     $response->write('Ação principal usuários');    
+    
+// });
+
+// $app->get('/postagens', function(Request $request, Response $response) {
+    
+//     $response->write('Ação principal postagens');    
+    
+// });
+
+
 
 
 /* Container dependecy injection */
-class Servico {
+// class Servico {
 
-}
+// }
 
-$servico = new Servico;
+// $servico = new Servico;
 
 /* Container Pimple */
-$container = $app->getContainer();
-$container['servico'] = function() {
-    return new Servico;
-};
+// $container = $app->getContainer();
+// $container['servico'] = function() {
+//     return new Servico;
+// };
 
-$app->get('/servico', function(Request $request, Response $response) {
+// $app->get('/servico', function(Request $request, Response $response) {
 
-    $servico = $this->get('servico');
-    var_dump($servico);
+//     $servico = $this->get('servico');
+//     var_dump($servico);
     
-});
+// });
 
 
 
 /* Controllers como serviço */
-$container = $app->getContainer();
-$container['Home'] = function() {
-    return new MyApp\controllers\Home(new MyApp\View);
-};
+// $container = $app->getContainer();
+// $container['Home'] = function() {
+//     return new MyApp\controllers\Home(new MyApp\View);
+// };
 
-$app->get('/usuario', 'Home:index');
+// $app->get('/usuario', 'Home:index');
 
-$app->run();
+
 
 /* Padrão PSR7 */
 // $app->get('/postagens', function(Request $request, Response $response) {
